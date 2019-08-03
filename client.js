@@ -7,27 +7,39 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const conn = net.connect({
-  host:'localhost',
-  port: 3000
-}, () => {
-  console.log("connected to server!");
-  rl.question("What should the file name be?", answer => {
-    conn.on("data", chunk => {
-      fs.writeFile(`${answer}`, chunk, err => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("File saved!");
-          conn.destroy();
-        }
-      });
+
+
+const conn = net.createConnection({host:'localhost', port:3000}, () => {
+  console.log('connected to server!');
+});
+
+conn.setEncoding("utf-8");
+
+const saveFile = (data) => {
+  rl.question("What should the file be called? ", saveAs => {
+    fs.writeFile(`${saveAs}`, data, err => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("File saved!");
+        conn.destroy();
+      }
     });
     rl.close();
+  });
+  
+};
+
+conn.on("connect", () => {
+  rl.question("What file are you looking for? ", file => {
+    conn.write(file);
+    conn.on("data", data => {
+      saveFile(data);
+    });
   });
 });
 
 
-conn.setEncoding("utf-8");
+
 
 

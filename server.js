@@ -21,20 +21,20 @@ server.on('error', (err) => {
   throw err;
 });
 
+// to do: check if file exists in directory
 server.on("connection", c => {
-  fs.readFile("dummy.txt", (err, data) => {
-    if (!err) {
-      console.log(data);
-      c.write(data);
-    } else {
-      console.log("readfile err");
-    }
+  let fileName;
+  c.on('data', file => {
+    fileName = file.toString();
+    fs.readFile(`${fileName}`, (err, data) => {
+      if (!err) {
+        // console.log(data);
+        c.write(data);
+      } else {
+        console.log(err);
+      }
+    });
+    c.pipe(c);
   });
-  c.pipe(c);
 });
 
-
-// rl.question('What file would you like today?', (file) => {
-//   fileName = file;
-//   rl.close();
-// });
