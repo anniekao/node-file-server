@@ -1,11 +1,5 @@
 const net = require('net');
 const fs = require('fs');
-const readline = require('readline');
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
 
 const server = net.createServer((c) => {
   console.log('client connected!');
